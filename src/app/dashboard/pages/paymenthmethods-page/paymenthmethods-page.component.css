@@ -1,0 +1,19 @@
+.table_content_td{
+  font-size: 11px;
+}
+
+/* .btn{
+  font-size: 11px;
+  padding: 1px 3px !important;
+  border-radius: 3px;
+} */
+
+.counter_inp{
+  width: 40px;
+  border-radius: 3px;
+}
+
+.actions_container{
+  display: flex;
+  gap: 2px;
+}

@@ -1,0 +1,170 @@
+<!-- <h1 class="text-secondary">Mientras</h1> -->
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="text-secondary">Formas de pago</h2>
+    <button class="btn btn-outline-primary fs-5" data-bs-toggle="modal" data-bs-target="#newPayMethod">
+      Nuevo
+    </button>
+  </div>
+
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr class="border">
+        <th class="table_content_td" scope="col">#</th>
+        <th class="table_content_td" scope="col">Nombre</th>
+        <th class="table_content_td" scope="col">Tipo</th>
+        <th class="table_content_td" scope="col">Nombre Titular Banco</th>
+        <th class="table_content_td" scope="col">Cuenta</th>
+        <th class="table_content_td" scope="col">Clabe</th>
+        <th class="table_content_td" scope="col">Tarjeta</th>
+        <th class="table_content_td" scope="col">Usuario</th>
+        <th class="table_content_td" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let methods of paymenthMethods; let i = index">
+        <th class="table_content_td" scope="row">{{i + 1}}</th>
+        <td class="table_content_td">{{methods.nombre}}</td>
+        <td class="table_content_td">{{methods.tipo}}</td>
+        <td class="table_content_td">{{methods.nombre_titular_banco}}</td>
+        <td class="table_content_td">{{methods.cuenta}}</td>
+        <td class="table_content_td">{{methods.clabe}}</td>
+        <td class="table_content_td">{{methods.tarjeta}}</td>
+        <td class="table_content_td">{{methods.usuario.nombre}}</td>
+
+        <td class="actions_container">
+          <button (click)="selectMethod(methods)" data-bs-toggle="modal" data-bs-target="#editProviderModal"
+            class="btn btn-outline-primary">
+            Editar
+          </button>
+          <button (click)="idDelete = methods.id" data-bs-toggle="modal" data-bs-target="#deletePayMethod"
+            class="btn btn-outline-danger">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="text-center text-secondary py-2" *ngIf="paymenthMethods.length === 0">No se encontraron metodos de pago</p>
+</div>
+
+<!-- *Para crear nuevo proveedor-->
+<div class="modal fade" id="newPayMethod" tabindex="-1" aria-labelledby="newPayMethodLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="createMethod()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newPayMethodLabel">Agregar Metodo de Pago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p class="text-secondary">Nombre</p>
+          <input [(ngModel)]="infoNewMethod.nombre" name="name" type="text" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <select [(ngModel)]="typeMethod" class="form-control" name="typeMethodSelect" [value]="typeMethod">
+            <option value="0">Efectivo</option>
+            <option value="1">Banco</option>
+          </select>
+        </div>
+        <div *ngIf="typeMethod === '1'">
+          <div class="mb-2">
+            <p class="text-secondary">Nombre Titular Banco</p>
+            <input [(ngModel)]="infoNewMethod.nombre_titular_banco" name="direccion" type="text"
+              [required]="typeMethod === '1'" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Banco</p>
+            <input [(ngModel)]="infoNewMethod.banco" name="direccion" type="text" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Cuenta</p>
+            <input [(ngModel)]="infoNewMethod.cuenta" name="direccion" type="text" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Clabe</p>
+            <input [(ngModel)]="infoNewMethod.clabe" name="direccion" type="text" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Tarjeta</p>
+            <input [(ngModel)]="infoNewMethod.tarjeta" name="direccion" type="text" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button data-bs-dismiss="modal" type="submit" class="btn btn-primary">Crear Metodo de Pago</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ? Para editar -->
+<div class="modal fade" id="editProviderModal" tabindex="-1" aria-labelledby="editProviderModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="editMethod()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editProviderModalLabel">Editar Metodo de pago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p class="text-secondary">Nombre</p>
+          <input [(ngModel)]="infoEditMethod.nombre" name="name" type="text" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <select [(ngModel)]="typeMethod" class="form-control" name="typeMethodSelect" [value]="typeMethod">
+            <option value="0">Efectivo</option>
+            <option value="1">Banco</option>
+          </select>
+        </div>
+        <div *ngIf="typeMethod == '1'">
+          <div class="mb-2">
+            <p class="text-secondary">Nombre Titular Banco</p>
+            <input [(ngModel)]="infoEditMethod.nombre_titular_banco" name="nombre_titular_banco_edit" type="text"
+              [required]="typeMethod === '1'" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Banco</p>
+            <input [(ngModel)]="infoEditMethod.banco" name="banco_edit" type="text" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Cuenta</p>
+            <input [(ngModel)]="infoEditMethod.cuenta" name="cuenta_edit" type="text" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Clabe</p>
+            <input [(ngModel)]="infoEditMethod.clabe" name="clabe_edit" type="text" class="form-control" />
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Tarjeta</p>
+            <input [(ngModel)]="infoEditMethod.tarjeta" name="clabe_tarjeta" type="text" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button data-bs-dismiss="modal" type="submit" class="btn btn-primary">Editar Metodo de pago</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- !Para eliminar -->
+<div class="modal fade" id="deletePayMethod" tabindex="-1" aria-labelledby="deletePayMethodLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deletePayMethodLabel">Eliminar Metodo de pago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas seguro de eliminar este metodo de pago?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button (click)="deleteMethod()" type="button" class="btn btn-primary" data-bs-dismiss="modal">Eliminar Metodo
+          de pago</button>
+      </div>
+    </div>
+  </div>
+</div>

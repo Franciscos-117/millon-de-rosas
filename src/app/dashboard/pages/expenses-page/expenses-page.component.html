@@ -1,0 +1,143 @@
+<!-- <h1 class="text-secondary">Mientras</h1> -->
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="text-secondary">Egresos</h2>
+    <button class="btn btn-outline-primary fs-5" data-bs-toggle="modal" data-bs-target="#newProviderModal">
+      Nuevo
+    </button>
+  </div>
+
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr class="border">
+        <th class="table_content_td text-secondary" scope="col">#</th>
+        <th class="table_content_td text-secondary" scope="col">Fecha</th>
+        <th class="table_content_td text-secondary" scope="col">Proveedor</th>
+        <th class="table_content_td text-secondary" scope="col">Descripcion</th>
+        <th class="table_content_td text-secondary" scope="col">Importe</th>
+        <th class="table_content_td text-secondary" scope="col">Forma de pago</th>
+        <th class="table_content_td text-secondary" scope="col">Usuario</th>
+        <th class="table_content_td text-secondary" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let expense of expenses; let i = index">
+        <th class="table_content_td text-secondary" scope="row">{{i + 1}}</th>
+        <td class="table_content_td text-secondary">{{expense.fecha}}</td>
+        <td class="table_content_td text-secondary">{{expense.proveedor.nombre}}</td>
+        <td class="table_content_td text-secondary">{{expense.descripcion}}</td>
+        <td class="table_content_td text-secondary">$ {{expense.importe}}</td>
+        <td class="table_content_td text-secondary">{{expense.forma_de_pago.nombre}}</td>
+        <td class="table_content_td text-secondary">{{expense.usuario.nombre}}</td>
+        <td class="actions_btns_container">
+          <button (click)="selectExpense(expense)" data-bs-toggle="modal" data-bs-target="#editExpenseModal" class="btn btn-outline-primary btn_actions">
+            Editar
+          </button>
+          <button (click)="idDelete = expense.id" data-bs-toggle="modal" data-bs-target="#deleteExpenseModal" class="btn btn-outline-danger btn_actions">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+  </table>
+</div>
+
+<!-- *Para crear nuevo-->
+<div class="modal fade" id="newProviderModal" tabindex="-1" aria-labelledby="newProviderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form  ngNativeValidate (submit)="createExpense()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newProviderModalLabel">Agregar Egreso</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p class="text-secondary">Fecha</p>
+          <input [(ngModel)]="infoNewExpense.fecha" name="dateNew" type="date" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Seleccione un proveedor</p>
+          <select required [(ngModel)]="infoNewExpense.proveedor_id" [value]="infoNewExpense.proveedor_id" class="form-control" name="selectProvider">
+            <option *ngFor="let provider of providers" [value]="provider.id">{{provider.nombre}}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Descripcion</p>
+          <input [(ngModel)]="infoNewExpense.descripcion" type="text"  name="descNew" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Importe</p>
+          <input [(ngModel)]="infoNewExpense.importe" name="importeNew" type="number" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Seleccione un banco</p>
+          <select required [(ngModel)]="infoNewExpense.forma_de_pago_id" [value]="infoNewExpense.forma_de_pago_id" class="form-control" name="methodSelect">
+            <option *ngFor="let method of paymenthMethods" [value]="method.id">{{method.nombre}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Crear Egreso</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ? Para editar -->
+<div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="editExpenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form  ngNativeValidate (submit)="editExpense()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editExpenseModalLabel">Editar Egreso</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p class="text-secondary">Fecha</p>
+          <input [(ngModel)]="infoEditExpense.fecha" name="dateNew" type="date" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Seleccione un proveedor</p>
+          <select required [(ngModel)]="infoEditExpense.proveedor_id" [value]="infoEditExpense.proveedor_id" class="form-control" name="selectProvider">
+            <option *ngFor="let provider of providers" [value]="provider.id">{{provider.nombre}}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Descripcion</p>
+          <input [(ngModel)]="infoEditExpense.descripcion" type="text"  name="descNew" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Importe</p>
+          <input [(ngModel)]="infoEditExpense.importe" name="importeNew" type="number" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Seleccione un banco</p>
+          <select required [(ngModel)]="infoEditExpense.forma_de_pago_id" [value]="infoEditExpense.forma_de_pago_id" class="form-control" name="methodSelect">
+            <option *ngFor="let method of paymenthMethods" [value]="method.id">{{method.nombre}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Editar Egreso</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- !Para eliminar -->
+<div class="modal fade" id="deleteExpenseModal" tabindex="-1" aria-labelledby="deleteExpenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteExpenseModalLabel">Elimar Egreso</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas seguro de eliminar este egreso?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button (click)="deleteExpense()" type="button" class="btn btn-primary" data-bs-dismiss="modal">Eliminar Egreso</button>
+      </div>
+    </div>
+  </div>
+</div>

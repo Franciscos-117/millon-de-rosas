@@ -1,0 +1,131 @@
+<!-- <h1 class="text-secondary">Mientras</h1> -->
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="text-secondary">Proveedores</h2>
+    <button class="btn btn-outline-primary fs-5" data-bs-toggle="modal" data-bs-target="#newProviderModal">
+      Nuevo
+    </button>
+  </div>
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr class="border">
+        <th class="table_content_td" scope="col">#</th>
+        <th class="table_content_td" scope="col">Nombre</th>
+        <th class="table_content_td" scope="col">Direccion</th>
+        <th class="table_content_td" scope="col">Telefono</th>
+        <th class="table_content_td" scope="col">Email</th>
+        <th class="table_content_td" scope="col">Usuario</th>
+        <th class="table_content_td" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let provider of providers; let i = index">
+        <th class="table_content_td" scope="row">{{i + 1}}</th>
+        <td class="table_content_td">{{provider.nombre}}</td>
+        <td class="table_content_td">{{provider.direccion}}</td>
+        <td class="table_content_td">{{provider.telefono}}</td>
+        <td class="table_content_td">{{provider.email}}</td>
+        <td class="table_content_td">{{provider.usuario.nombre}}</td>
+        <td class="">
+          <button (click)="selectedProvider(provider)" data-bs-toggle="modal" data-bs-target="#editProviderModal"
+            class="btn btn-outline-primary">
+            Editar
+          </button>
+          <button (click)="idProviderToDelete = provider.id" data-bs-toggle="modal"
+            data-bs-target="#deleteProviderModal" class="btn btn-outline-danger">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="text-center text-secondary py-2" *ngIf="providers.length === 0">No se encontraron proveedores</p>
+</div>
+
+<!-- *Para crear nuevo proveedor-->
+<div class="modal fade" id="newProviderModal" tabindex="-1" aria-labelledby="newProviderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="createProvider()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newProviderModalLabel">Agregar Proveedor</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <p class="text-secondary">Nombre</p>
+          <input [(ngModel)]="newProviderInfo.nombre" name="name" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Direccion</p>
+          <input [(ngModel)]="newProviderInfo.direccion" name="direccion" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Telefono</p>
+          <input [(ngModel)]="newProviderInfo.telefono" name="telefono" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Email</p>
+          <input [(ngModel)]="newProviderInfo.email" name="email" type="email" required class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Crear Proveedor</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ? Para editar proveedor -->
+<div class="modal fade" id="editProviderModal" tabindex="-1" aria-labelledby="editProviderModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="editProvider()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editProviderModalLabel">Editar Proveedor</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <p class="text-secondary">Nombre</p>
+          <input [(ngModel)]="editProviderInfo.nombre" name="name" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Direccion</p>
+          <input [(ngModel)]="editProviderInfo.direccion" name="direccion" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Telefono</p>
+          <input [(ngModel)]="editProviderInfo.telefono" name="telefono" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Email</p>
+          <input [(ngModel)]="editProviderInfo.email" name="email" type="email" required class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Editar Proveedor</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- !Para eliminar -->
+<div class="modal fade" id="deleteProviderModal" tabindex="-1" aria-labelledby="deleteProviderModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteProviderModalLabel">Editar Proveedor</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas seguro de eliminar a este provedor?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button (click)="deleteProvider()" type="button" class="btn btn-primary" data-bs-dismiss="modal">Eliminar
+          Proveedor</button>
+      </div>
+    </div>
+  </div>
+</div>

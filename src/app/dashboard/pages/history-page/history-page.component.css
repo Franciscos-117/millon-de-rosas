@@ -1,0 +1,20 @@
+.table_content_td {
+  font-size: 10px;
+  padding: 1px !important;
+}
+
+.btn_cont {
+  display: flex;
+  gap: 2px;
+}
+
+.btn_actions {
+  width: 40px;
+  font-size: 8px;
+  padding: 1px 3px !important;
+  border-radius: 3px;
+}
+
+.more_info {
+  max-width: 30px;
+}

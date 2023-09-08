@@ -1,0 +1,39 @@
+.title_sidebar {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: .05rem;
+}
+.title_cont{
+  padding: .2em;
+  /* border-bottom: 1px solid #fff; */
+}
+
+.list_cat_cont{
+  list-style: none;
+}
+.item_cat{
+  color: rgba(255,255,255,.8);
+  font-weight: 200;
+  padding: 10px 0;
+  /* text-align: center; */
+}
+.item_cat:hover{
+  cursor: pointer;
+}
+.sidebar_cont{
+  padding: 14px 0;
+}
+
+.subcat_item{
+  color: #000;
+}
+/* .subcat_item:hover{
+  background: #f2f2f2;
+  border-radius: 8px;
+} */
+
+.accordeon_cont{
+  padding: 10px 20px;
+}

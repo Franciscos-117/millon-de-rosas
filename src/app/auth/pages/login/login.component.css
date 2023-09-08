@@ -1,0 +1,62 @@
+.main_container {
+  background-color: #4e73df;
+  min-height: 100vh;
+  padding-top: 30px;
+}
+
+.btn_login {
+  background-color: #4e73df;
+  border-color: #4e73df;
+}
+
+.btn_login:hover {
+  cursor: pointer;
+  background-color: #4e73df;
+}
+
+.title{
+  color: #3a3b45;
+}
+
+/* * Desktop */
+@media only screen and (min-width: 1024px) {
+
+  .login_container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 912px;
+    margin: 0 auto;
+  }
+  .form_login{
+    padding: 3em;
+  }
+}
+
+/* * Tablet */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .left_nothing{
+    display: none;
+  }
+  .login_container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 912px;
+    margin: 0 auto;
+  }
+  .form_login{
+    padding: 3em;
+  }
+}
+
+/* * Mobil */
+@media only screen and (max-width: 767px) {
+  .left_nothing{
+    display: none;
+  }
+  .main_container{
+    padding: 80px 5%;
+  }
+  .form_login{
+    padding: 1em;
+  }
+}

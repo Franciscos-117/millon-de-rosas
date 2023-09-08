@@ -1,0 +1,31 @@
+<div class="main_container">
+  <div class="login_container bg-white rounded-2">
+    <div class="col left_nothing">
+    </div>
+    <div class="col">
+      <form ngNativeValidate (submit)="initSession()" class="form_login">
+        <p class="text-center fs-3 title">¡Bienvenido!</p>
+        <input
+          required
+          [(ngModel)]="formValues.email"
+          name="email"
+          type="email"
+          placeholder="Email"
+          class="form-control rounded-5 mb-3 mb-3 p-3"
+        />
+        <input
+          required
+          [(ngModel)]="formValues.password"
+          name="password"
+          placeholder="Contraseña"
+          type="password"
+          class="form-control rounded-5 mb-3 p-3"
+        />
+        <button type="submit" class="btn w-100 text-white rounded-5 p-3 btn_login">
+          Acceder
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>

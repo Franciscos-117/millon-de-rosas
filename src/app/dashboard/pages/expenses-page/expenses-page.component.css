@@ -1,0 +1,14 @@
+.table_content_td{
+  font-size: 11px;
+}
+
+.btn_actions{
+  padding: 1px 3px !important;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.actions_btns_container{
+  display: flex;
+  gap: 2px;
+}

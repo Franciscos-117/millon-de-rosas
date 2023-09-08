@@ -1,0 +1,32 @@
+<div class="title_cont border-bottom">
+  <p class="title_sidebar">MILLÓN DE ROSAS</p>
+</div>
+<div class="sidebar_cont">
+  <ul class="list-group list_cat_cont accordion accordion-flush" id="dashboard_accordion">
+    <li
+      class="item_cat collapsed"
+      data-bs-toggle="collapse"
+      attr.data-bs-target="#flush-collapseOne{{i}}"
+      aria-expanded="false"
+      *ngFor="let category of categories; let i = index"
+      attr.aria-controls="flush-collapseOne{{i}}"
+      >
+      <div>
+        <li class="item_cat">{{category.title}}</li>
+        <ul id="{{'flush-collapseOne' + i}}" class="list-unstyled accordion-collapse collapse bg-white rounded 3 px-2" data-bs-parent="#dashboard_accordion">
+          <li
+            class="subcat_item p-2"
+            *ngFor="let subcat of category.subCategories"
+            (click)="navToOtherScreen(subcat.path)"
+            >
+            {{subcat.title}}
+          </li>
+        </ul>
+      </div>
+    </li>
+    <button (click)="closeSession()" class="btn btn-danger">
+      Cerrar sesion
+    </button>
+  </ul>
+</div>
+

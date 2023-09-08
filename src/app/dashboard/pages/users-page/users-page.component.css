@@ -1,0 +1,20 @@
+.count_search_cont{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search_users_cont{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table_users{
+  border-radius: 20px !important;
+}
+
+.counter_inp{
+  border-radius: 8px;
+  width: 50px;
+}

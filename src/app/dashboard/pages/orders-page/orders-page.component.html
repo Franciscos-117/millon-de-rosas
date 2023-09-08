@@ -1,0 +1,388 @@
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="text-secondary">Pedidos Activos</h2>
+  </div>
+  <div>
+    <button data-bs-toggle="modal" data-bs-target="#newOrderModal" class="btn btn-outline-primary mb-3">
+      Nuevo Pedido
+    </button>
+  </div>
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr class="border">
+        <!-- <th class="table_content_td text-secondary" scope="col">#</th> -->
+        <th class="table_content_td text-secondary" scope="col">Pedido</th>
+        <th class="table_content_td text-secondary" scope="col">Cliente</th>
+        <th class="table_content_td text-secondary" scope="col">Producto</th>
+        <th class="table_content_td text-secondary" scope="col">Fecha pedido</th>
+        <th class="table_content_td text-secondary" scope="col">Precio</th>
+        <th class="table_content_td text-secondary" scope="col">Anticipo</th>
+        <th class="table_content_td text-secondary" scope="col">Saldo</th>
+        <th class="table_content_td text-secondary" scope="col">Fecha de entrega</th>
+        <th class="table_content_td text-secondary" scope="col">Hora</th>
+        <th class="table_content_td text-secondary" scope="col">Tipo entrega</th>
+        <th class="table_content_td text-secondary" scope="col">Nombre Receptor</th>
+        <th class="table_content_td text-secondary" scope="col">Datos entrega</th>
+        <th class="table_content_td text-secondary" scope="col">Estatus</th>
+        <th class="table_content_td text-secondary" scope="col">Repartidor</th>
+        <th class="table_content_td text-secondary" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders; let i = index">
+        <td class="table_content_td text-secondary">{{order.id}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.cliente.nombre}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.producto}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.fecha_pedido}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.costo}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.anticipo}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.saldo}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.fecha_entrega}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.hora}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.tipo_entrega}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.nombre_receptor}}</td>
+        <td class="table_content_td more_info text-secondary">Telefono: {{order.productos.telefono_receptor}},
+          Direccion: {{order.productos.direccion}}, Mensaje: {{order.productos.mensaje_tarjeta}}, Comentarios:
+          {{order.productos.comentarios}}</td>
+        <td class="table_content_td more_info text-secondary">
+          {{order.status == 0 ? 'Por Pagar' : null}}
+          {{order.status == 1 ? 'Pagado' : null}}
+          {{order.status == 2 ? 'Por Elaborar' : null}}
+          {{order.status == 3 ? 'Elaborado' : null}}
+          {{order.status == 4 ? 'En ruta' : null}}
+        </td>
+        <td class="table_content_td  more_infotext-secondary">{{order.productos.repartidor}}</td>
+
+        <td class="btn_cont">
+          <button (click)="selectOrderInfo(order)" data-bs-toggle="modal" data-bs-target="#editOrderModal"
+            class="btn btn-outline-primary btn_actions">
+            Editar
+          </button>
+          <button (click)="getPaymenthsOrders(order.id, order.productos.producto)" data-bs-toggle="modal"
+            data-bs-target="#paymenthsTableModal" class="btn btn-outline-success btn_actions">
+            Pagos
+          </button>
+          <button (click)="selectOrderToPay(order)" data-bs-toggle="modal" data-bs-target="#payOrderModal"
+            class="btn btn-outline-secondary btn_actions">
+            Pagar
+          </button>
+          <button (click)="selectOrderInfo(order)" data-bs-toggle="modal" data-bs-target="#avanzarModal"
+            class="btn btn-outline-primary btn_actions">
+            Avanzar
+          </button>
+          <button (click)="idDelete = order.id" data-bs-toggle="modal" data-bs-target="#deleteIncomeModal"
+            class="btn btn-outline-danger btn_actions">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- <div class="btn-group me-2" role="group" aria-label="First group">
+    <button type="button" class="btn btn-outline-primary">Anterior</button>
+    <button type="button" class="btn btn-outline-primary">1</button>
+    <button type="button" class="btn btn-outline-primary">2</button>
+    <button type="button" class="btn btn-outline-primary">3</button>
+    <button type="button" class="btn btn-outline-primary">4</button>
+    <button type="button" class="btn btn-outline-primary">Siguiente</button>
+  </div> -->
+</div>
+
+<!-- *Para crear nuevo Pedido-->
+<div class="modal fade" id="newOrderModal" tabindex="-1" aria-labelledby="newOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="createOrder()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newOrderModalLabel">Agregar Pedido</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p class="text-secondary">Cliente</p>
+          <select required [(ngModel)]="newOrderInfo.cliente_id" class="form-control" name="selectClientNew"
+            [value]="newOrderInfo.cliente_id">
+            <option *ngFor="let client of clients" [value]="client.id">{{client.nombre}}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Fecha del pedido</p>
+          <input [(ngModel)]="newOrderInfo.fecha_pedido" name="fecha_pedidoNew" type="date" required
+            class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Producto</p>
+          <input [(ngModel)]="newOrderInfo.producto" name="product" type="text" required class="form-control" />
+        </div>
+        <div class="mb-2 row row-cols-md-2">
+          <div class="">
+            <p class="text-secondary">Costo</p>
+            <input [(ngModel)]="newOrderInfo.costo" name="cost" type="number" required class="form-control" />
+          </div>
+          <div class="">
+            <p class="text-secondary">Tipo de entrega</p>
+            <select [(ngModel)]="newOrderInfo.tipo_entrega" class="form-control" name="selectClientNew"
+              [value]="newOrderInfo.tipo_entrega">
+              <option [value]="0">Recoger en Tienda</option>
+              <option [value]="1">Envio a domicilio</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-2 row row-cols-md-2">
+          <div class="">
+            <p class="text-secondary">Fecha entrega</p>
+            <input [(ngModel)]="newOrderInfo.fecha_entrega" name="fe" type="date" class="form-control" />
+          </div>
+          <div class="">
+            <p class="text-secondary">Hora</p>
+            <input [(ngModel)]="newOrderInfo.hora" name="hor" type="time" class="form-control" />
+          </div>
+        </div>
+        <div class="mb-2 row row-cols-md-2">
+          <div class="">
+            <p class="text-secondary">Nombre Receptopr</p>
+            <input [(ngModel)]="newOrderInfo.nombre_receptor" name="nr" type="text" class="form-control" />
+          </div>
+          <div class="">
+            <p class="text-secondary">Telefono Receptor</p>
+            <input [(ngModel)]="newOrderInfo.telefono_receptor" name="nr" type="text" class="form-control" />
+          </div>
+        </div>
+        <div class="mb-2">
+
+          <!-- <input class="form-control" [(ngModel)]="newOrderInfo.direccion" name="addres" type="text" /> -->
+          <google-autocomplete (placeChanged)="handlePlace($event)"
+            placeholder="Direccion"></google-autocomplete>
+            <button (click)="openGoogleMaps()" class="btn btn-primary mt-2" *ngIf="autocomple">
+              Ver en el mapa
+            </button>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Mensaje Tarjeta</p>
+          <textarea rows="5" [(ngModel)]="newOrderInfo.mensaje_tarjeta" name="addres" type="text"
+            class="form-control"></textarea>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Comentario</p>
+          <textarea rows="5" [(ngModel)]="newOrderInfo.comentarios" name="comment" type="text"
+            class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Crear Pedido</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ? Para editar pedido-->
+<div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="editOrder()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editOrderModalLabel">Editar Pedido</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p class="text-secondary">Cliente</p>
+          <select required [(ngModel)]="editOrderInfo.cliente_id" class="form-control" name="selectClientEdit"
+            [value]="editOrderInfo.cliente_id">
+            <option *ngFor="let client of clients" [value]="client.id">{{client.nombre}}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Fecha del pedido</p>
+          <input [(ngModel)]="editOrderInfo.fecha_pedido" name="fecha_pedidoEdit" type="date" required
+            class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Producto</p>
+          <input [(ngModel)]="editOrderInfo.producto" name="productEdit" type="text" required class="form-control" />
+        </div>
+        <div class="mb-2 row row-cols-md-2">
+          <div class="">
+            <p class="text-secondary">Costo</p>
+            <input [(ngModel)]="editOrderInfo.costo" name="costEdit" type="number" required class="form-control" />
+          </div>
+          <div class="">
+            <p class="text-secondary">Tipo de entrega</p>
+            <select [(ngModel)]="editOrderInfo.tipo_entrega" class="form-control" name="selectClientEdit"
+              [value]="editOrderInfo.tipo_entrega">
+              <option [value]="0">Recoger en Tienda</option>
+              <option [value]="1">Envio a domicilio</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-2 row row-cols-md-2">
+          <div class="">
+            <p class="text-secondary">Fecha entrega</p>
+            <input [(ngModel)]="editOrderInfo.fecha_entrega" name="feEdit" type="date" class="form-control" />
+          </div>
+          <div class="">
+            <p class="text-secondary">Hora</p>
+            <input [(ngModel)]="editOrderInfo.hora" name="horEdit" type="time" class="form-control" />
+          </div>
+        </div>
+        <div class="mb-2 row row-cols-md-2">
+          <div class="">
+            <p class="text-secondary">Nombre Receptopr</p>
+            <input [(ngModel)]="editOrderInfo.nombre_receptor" name="nrEdit" type="text" class="form-control" />
+          </div>
+          <div class="">
+            <p class="text-secondary">Telefono Receptor</p>
+            <input [(ngModel)]="editOrderInfo.telefono_receptor" name="nrEdit" type="text" class="form-control" />
+          </div>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Direccion</p>
+          <input [(ngModel)]="editOrderInfo.direccion" name="addresEdit" type="text" class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Mensaje Tarjeta</p>
+          <textarea rows="5" [(ngModel)]="editOrderInfo.mensaje_tarjeta" name="addresEdit" type="text"
+            class="form-control"></textarea>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Comentario</p>
+          <textarea rows="5" [(ngModel)]="editOrderInfo.comentarios" name="commentEdit" type="text"
+            class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Actualizar Pedido</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- *Para ver pagos -->
+<div class="modal fade" id="paymenthsTableModal" tabindex="-1" aria-labelledby="paymenthsTableModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="paymenthsTableModalLabel">Pagos</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table border table-striped table-bordered table_users">
+          <thead>
+            <tr class="border">
+              <!-- <th class="table_content_td text-secondary" scope="col">#</th> -->
+              <th class="table_content_td text-secondary" scope="col">Producto</th>
+              <th class="table_content_td text-secondary" scope="col">Pedido</th>
+              <th class="table_content_td text-secondary" scope="col">Forma de pago</th>
+              <th class="table_content_td text-secondary" scope="col">Fecha</th>
+              <th class="table_content_td text-secondary" scope="col">Importe</th>
+              <th class="table_content_td text-secondary" scope="col">Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let paymenth of paymenthsPerId; let i = index">
+              <td class="table_content_td more_info text-secondary">{{productClicked}}</td>
+              <td class="table_content_td more_info text-secondary">{{paymenth.pedido.id}}</td>
+              <td class="table_content_td more_info text-secondary">{{paymenth.forma_de_pago.nombre}}</td>
+              <td class="table_content_td more_info text-secondary">{{paymenth.fecha}}</td>
+              <td class="table_content_td more_info text-secondary">${{paymenth.importe}}</td>
+              <td class="table_content_td more_info text-secondary"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- *Para Pagar -->
+<div class="modal fade" id="payOrderModal" tabindex="-1" aria-labelledby="payOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form ngNativeValidate (submit)="createPayToOrder()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="payOrderModalLabel">Generar pago</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <p>{{formAddPay.nombre}}</p>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Forma de pago</p>
+          <select required [(ngModel)]="formAddPay.forma_de_pago_id" class="form-control" name="selectPayMethod"
+            [value]="formAddPay.forma_de_pago_id">
+            <option *ngFor="let method of payMethods" [value]="method.id">{{method.nombre}}</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Fecha</p>
+          <input [(ngModel)]="formAddPay.fecha" name="fecha_pedidoPay" type="date" required class="form-control" />
+        </div>
+        <div class="mb-2">
+          <p class="text-secondary">Importe</p>
+          <input [(ngModel)]="formAddPay.importe" name="importePay" type="number" required class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">
+          Generar Pago
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ?Para avanzar -->
+<div class="modal fade" id="avanzarModal" tabindex="-1" aria-labelledby="avanzarModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!-- <h1 class="modal-title fs-5" id="avanzarModalLabel">Eliminar Pedido</h1> -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-secondary">Seleccione una opcion</p>
+        <p>{{editOrderInfo | json}}</p>
+        <select [(ngModel)]="editOrderInfo.status" [value]="editOrderInfo.status" class="form-control">
+          <option value="0">Por Pagar</option>
+          <option value="1">Pagado</option>
+          <option value="2">Por Elaborar</option>
+          <option value="3">Elaborado</option>
+          <option value="4">En ruta</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button (click)="editOrder()" type="button" class="btn btn-primary" data-bs-dismiss="modal">
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- !Para eliminar -->
+<div class="modal fade" id="deleteIncomeModal" tabindex="-1" aria-labelledby="deleteIncomeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteIncomeModalLabel">Eliminar Pedido</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas seguro de eliminar este Pedido?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button (click)="deleteOrder()" type="button" class="btn btn-primary" data-bs-dismiss="modal">
+          Eliminar Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

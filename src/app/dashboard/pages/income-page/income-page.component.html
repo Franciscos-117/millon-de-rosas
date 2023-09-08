@@ -1,0 +1,66 @@
+<!-- <h1 class="text-secondary">Mientras</h1> -->
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="text-secondary">Ingresos</h2>
+  </div>
+  <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+    <p>Mostrar
+      <select name="qiSelect" class="qiSelect_cont">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20" selected>20</option>
+      </select>
+    registros</p>
+    <div class="d-flex justify-content-between align-items-center">
+      <p>Buscar: </p>
+      <input [ngModel]="searchText" (ngModelChange)="onChangeFilter($event)" placeholder="" class="form-control" />
+    </div>
+  </div> -->
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr>
+        <th class="table_content_td text-secondary" scope="col">#</th>
+        <th class="table_content_td text-secondary" scope="col">Pedido</th>
+        <th class="table_content_td text-secondary" scope="col">Formas de Pago</th>
+        <th class="table_content_td text-secondary" scope="col">Fecha</th>
+        <th class="table_content_td text-secondary" scope="col">Importe</th>
+        <th class="table_content_td text-secondary" scope="col">Usuario</th>
+        <th class="table_content_td text-secondary" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let income of incomes; let i = index">
+        <th class="table_content_td text-secondary" scope="row">{{i + 1}}</th>
+        <td class="table_content_td text-secondary">{{income.pedido.id}}</td>
+        <td class="table_content_td text-secondary">{{income.forma_de_pago.nombre}}</td>
+        <td class="table_content_td text-secondary">{{income.fecha}}</td>
+        <td class="table_content_td text-secondary">$ {{income.importe}}</td>
+        <td class="table_content_td text-secondary">{{income.usuario.nombre}}</td>
+        <td class="">
+          <button (click)="idDelete = income.id" data-bs-toggle="modal" data-bs-target="#deleteIncomeModal" class="btn btn-outline-danger bg-white btn_actions">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+  </table>
+</div>
+
+<!-- !Para eliminar -->
+<div class="modal fade" id="deleteIncomeModal" tabindex="-1" aria-labelledby="deleteIncomeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteIncomeModalLabel">Eliminar Ingreso</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas seguro de eliminar este ingreso?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button data-bs-dismiss="modal" (click)="deleteIncome()" type="button" class="btn btn-primary" data-bs-dismiss="modal">Eliminar Ingreso</button>
+      </div>
+    </div>
+  </div>
+</div>

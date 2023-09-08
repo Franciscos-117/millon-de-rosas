@@ -1,0 +1,113 @@
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="text-secondary">Clientes</h2>
+    <button class="btn btn-outline-primary btn_actions" data-bs-toggle="modal" data-bs-target="#newClientModal">
+      Nuevo
+    </button>
+  </div>
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr class="border">
+        <th class="field_content" scope="col">#</th>
+        <th class="field_content" scope="col">Nombre</th>
+        <th class="field_content" scope="col">Telefono</th>
+        <th class="field_content" scope="col">Email</th>
+        <th class="field_content" scope="col">Usuario</th>
+        <th class="field_content" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let client of clients; let i = index">
+        <th class="field_content" scope="row">{{i + 1}}</th>
+        <td class="field_content">{{client.nombre}}</td>
+        <td class="field_content">{{client.telefono}}</td>
+        <td class="field_content">{{client.email}}</td>
+        <td class="field_content">{{client.usuario.nombre}}</td>
+        <td class="">
+          <button (click)="selectClient(client)" class="btn btn-outline-primary btn_actions" data-bs-toggle="modal" data-bs-target="#editClientModal">
+            Editar
+          </button>
+          <button (click)="idDelete = client.id"  class="btn btn-outline-danger btn_actions" data-bs-toggle="modal" data-bs-target="#deleteClientModal">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+  </table>
+</div>
+<!-- *Para crear nuevo cliente-->
+<div class="modal fade" id="newClientModal" tabindex="-1" aria-labelledby="newClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form  ngNativeValidate (submit)="createClient()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newClientModalLabel">Agregar Cliente</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <p class="text-secondary">Nombre</p>
+          <input [(ngModel)]="infoNewClient.nombre" name="nameNew" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Telefono</p>
+          <input [(ngModel)]="infoNewClient.telefono" name="telefonoNew" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Email</p>
+          <input [(ngModel)]="infoNewClient.email" name="emailNew" type="email" required class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Crear Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ? Para editar cliente -->
+<div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form  ngNativeValidate (submit)="editClient()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editClientModalLabel">Editar Cliente</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <p class="text-secondary">Nombre</p>
+          <input [(ngModel)]="infoEditClient.nombre" name="nameEdit" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Telefono</p>
+          <input [(ngModel)]="infoEditClient.telefono" name="telefonoEdit" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Email</p>
+          <input [(ngModel)]="infoEditClient.email" name="emailEdit" type="email" required class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Actualizar Cliente</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- !Para eliminar -->
+<div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteClientModalLabel">Eliminar Cliente</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Estas seguro de eliminar a este cliente?</p>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button (click)="deleteClient()" type="button" class="btn btn-primary" data-bs-dismiss="modal">Eliminar Cliente</button>
+      </div>
+    </div>
+  </div>
+</div>
+

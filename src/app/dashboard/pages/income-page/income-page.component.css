@@ -1,0 +1,21 @@
+.table_content_td{
+  font-size: 11px;
+}
+
+.btn_actions{
+  padding: 1px 3px !important;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.counter_inp{
+  width: 40px;
+  border-radius: 3px;
+}
+
+.qiSelect_cont{
+  display: inline;
+  width: 50px;
+  border: 1px solid #f2f2f2;
+  border-radius: 3px;
+}
