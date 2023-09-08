@@ -10,6 +10,7 @@ const routes: Routes = [
     canActivate: [ DashboardGuard ],
     canMatch: [ DashboardGuard ]
   },
+  //
   {
     path: 'dashboard',
     loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
