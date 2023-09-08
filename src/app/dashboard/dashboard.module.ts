@@ -22,8 +22,6 @@ import ClientServices from './pages/clients-page/services/clients.service';
 import { OrdersPageComponent } from './pages/orders-page/orders-page.component';
 import OrderServices from './pages/orders-page/services/orders.service';
 import { GoogleAutocompleteComponent } from './components/google-autocomplete/google-autocomplete.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { DataTablesModule } from "angular-datatables";
 import { HistoryPageComponent } from './pages/history-page/history-page.component';
 
@@ -49,8 +47,6 @@ import { HistoryPageComponent } from './pages/history-page/history-page.componen
     CommonModule,
     DashboardRoutingModule,
     FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
     DataTablesModule
   ],
   providers: [
