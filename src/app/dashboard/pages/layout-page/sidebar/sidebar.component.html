@@ -15,9 +15,9 @@
         <li class="item_cat">{{category.title}}</li>
         <ul id="{{'flush-collapseOne' + i}}" class="list-unstyled accordion-collapse collapse bg-white rounded 3 px-2" data-bs-parent="#dashboard_accordion">
           <li
-            class="subcat_item p-2"
-            *ngFor="let subcat of category.subCategories"
-            (click)="navToOtherScreen(subcat.path)"
+              class="subcat_item p-2"
+              (click)="navToOtherScreen(subcat.path)"
+              *ngFor="let subcat of category.subCategories; let ind = index"
             >
             {{subcat.title}}
           </li>
