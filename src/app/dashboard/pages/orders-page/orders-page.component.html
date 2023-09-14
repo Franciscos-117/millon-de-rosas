@@ -39,11 +39,17 @@
         <td class="table_content_td  more_info text-secondary">{{order.saldo}}</td>
         <td class="table_content_td  more_info text-secondary">{{order.productos.fecha_entrega}}</td>
         <td class="table_content_td  more_info text-secondary">{{order.productos.hora}}</td>
-        <td class="table_content_td  more_info text-secondary">{{order.productos.tipo_entrega}}</td>
+        <td class="table_content_td  more_info text-secondary">{{order.productos.tipo_entrega === '0' ? "Recoger en tienda" : "Envio a domicilio"}}</td>
         <td class="table_content_td  more_info text-secondary">{{order.productos.nombre_receptor}}</td>
-        <td class="table_content_td more_info text-secondary">Telefono: {{order.productos.telefono_receptor}},
-          Direccion: {{order.productos.direccion}}, Mensaje: {{order.productos.mensaje_tarjeta}}, Comentarios:
-          {{order.productos.comentarios}}</td>
+        <td class="table_content_td more_info text-secondary">
+          <b>Telefono:</b> {{order.productos.telefono_receptor}}
+          <br/>
+          <b>Direccion</b>: {{order.productos.direccion}},
+          <br/>
+          <b>Mensaje</b>: {{order.productos.mensaje_tarjeta}},
+          <br/>
+          <b>Comentarios</b>: {{order.productos.comentarios}}
+        </td>
         <td class="table_content_td more_info text-secondary">
           {{order.status == 0 ? 'Por Pagar' : null}}
           {{order.status == 1 ? 'Pagado' : null}}
@@ -62,7 +68,7 @@
             data-bs-target="#paymenthsTableModal" class="btn btn-outline-success btn_actions">
             Pagos
           </button>
-          <button (click)="selectOrderToPay(order)" data-bs-toggle="modal" data-bs-target="#payOrderModal"
+          <button *ngIf="order.saldo > '0'" (click)="selectOrderToPay(order)" data-bs-toggle="modal" data-bs-target="#payOrderModal"
             class="btn btn-outline-secondary btn_actions">
             Pagar
           </button>
@@ -78,14 +84,6 @@
       </tr>
     </tbody>
   </table>
-  <!-- <div class="btn-group me-2" role="group" aria-label="First group">
-    <button type="button" class="btn btn-outline-primary">Anterior</button>
-    <button type="button" class="btn btn-outline-primary">1</button>
-    <button type="button" class="btn btn-outline-primary">2</button>
-    <button type="button" class="btn btn-outline-primary">3</button>
-    <button type="button" class="btn btn-outline-primary">4</button>
-    <button type="button" class="btn btn-outline-primary">Siguiente</button>
-  </div> -->
 </div>
 
 <!-- *Para crear nuevo Pedido-->
@@ -101,8 +99,25 @@
           <p class="text-secondary">Cliente</p>
           <select required [(ngModel)]="newOrderInfo.cliente_id" class="form-control" name="selectClientNew"
             [value]="newOrderInfo.cliente_id">
-            <option *ngFor="let client of clients" [value]="client.id">{{client.nombre}}</option>
+            <option *ngFor="let client of clients" [value]="client.id">{{client.nombre}} - {{client.telefono.trim() === '' ? 'No tiene numero' :  client.telefono}}</option>
           </select>
+          <button (click)="changeBoolClient()" type="button" class="btn btn-secondary my-2">
+            Agregar cliente
+          </button>
+          <div *ngIf="isCreatingClient" class="border mx-3 p-2">
+            <p class="text-secondary">Nombre del cliente</p>
+            <input [(ngModel)]="clientForm.nombre" name="client_nombre" type="text"
+            class="form-control mb-2" />
+            <p class="text-secondary">Correo del cliente</p>
+            <input [(ngModel)]="clientForm.email" name="client_nombre" type="email"
+            class="form-control mb-2" />
+            <p class="text-secondary">Telefono del cliente</p>
+            <input [(ngModel)]="clientForm.telefono" name="client_nombre" type="number"
+            class="form-control mb-2" />
+            <button type="button" (click)="createClient()" class="btn btn-outline-primary">
+              Crear cliente
+            </button>
+          </div>
         </div>
         <div class="mb-2">
           <p class="text-secondary">Fecha del pedido</p>
@@ -127,46 +142,48 @@
             </select>
           </div>
         </div>
-        <div class="mb-2 row row-cols-md-2">
-          <div class="">
-            <p class="text-secondary">Fecha entrega</p>
-            <input [(ngModel)]="newOrderInfo.fecha_entrega" name="fe" type="date" class="form-control" />
+        <!-- <div *ngIf="newOrderInfo.tipo_entrega == '1'" class=""> -->
+          <div class="mb-2 row row-cols-md-2">
+            <div class="">
+              <p class="text-secondary">Fecha entrega</p>
+              <input [min]="newOrderInfo.fecha_pedido" required [(ngModel)]="newOrderInfo.fecha_entrega" name="fe" type="date" class="form-control" />
+            </div>
+            <div class="">
+              <p class="text-secondary">Hora</p>
+              <input required [(ngModel)]="newOrderInfo.hora" name="hor" type="time" class="form-control" />
+            </div>
           </div>
-          <div class="">
-            <p class="text-secondary">Hora</p>
-            <input [(ngModel)]="newOrderInfo.hora" name="hor" type="time" class="form-control" />
+          <div class="mb-2 row row-cols-md-2">
+            <div class="">
+              <p class="text-secondary">Nombre Receptor</p>
+              <input required [(ngModel)]="newOrderInfo.nombre_receptor" name="nr" type="text" class="form-control" />
+            </div>
+            <div class="">
+              <p class="text-secondary">Telefono Receptor</p>
+              <input [(ngModel)]="newOrderInfo.telefono_receptor" name="tr" type="text" class="form-control" />
+            </div>
           </div>
-        </div>
-        <div class="mb-2 row row-cols-md-2">
-          <div class="">
-            <p class="text-secondary">Nombre Receptopr</p>
-            <input [(ngModel)]="newOrderInfo.nombre_receptor" name="nr" type="text" class="form-control" />
-          </div>
-          <div class="">
-            <p class="text-secondary">Telefono Receptor</p>
-            <input [(ngModel)]="newOrderInfo.telefono_receptor" name="tr" type="text" class="form-control" />
-          </div>
-        </div>
-        <div class="mb-2">
+          <div *ngIf="newOrderInfo.tipo_entrega == '1'" class="mb-2">
 
-          <!-- <input class="form-control" [(ngModel)]="newOrderInfo.direccion" name="addres" type="text" /> -->
-          <google-autocomplete (placeChanged)="handlePlace($event)"
-            placeholder="Direccion"></google-autocomplete>
-            <button (click)="openGoogleMaps()" class="btn btn-primary mt-2" *ngIf="autocomple">
-              Ver en el mapa
-            </button>
+            <!-- <input class="form-control" [(ngModel)]="newOrderInfo.direccion" name="addres" type="text" /> -->
+            <google-autocomplete (placeChanged)="handlePlace($event)"
+              placeholder="Direccion"></google-autocomplete>
+              <button (click)="openGoogleMaps()" class="btn btn-primary mt-2" *ngIf="autocomple">
+                Ver en el mapa
+              </button>
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Mensaje Tarjeta</p>
+            <textarea required rows="5" [(ngModel)]="newOrderInfo.mensaje_tarjeta" name="addres" type="text"
+              class="form-control"></textarea>
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Comentario</p>
+            <textarea required rows="5" [(ngModel)]="newOrderInfo.comentarios" name="comment" type="text"
+              class="form-control"></textarea>
+          </div>
         </div>
-        <div class="mb-2">
-          <p class="text-secondary">Mensaje Tarjeta</p>
-          <textarea rows="5" [(ngModel)]="newOrderInfo.mensaje_tarjeta" name="addres" type="text"
-            class="form-control"></textarea>
-        </div>
-        <div class="mb-2">
-          <p class="text-secondary">Comentario</p>
-          <textarea rows="5" [(ngModel)]="newOrderInfo.comentarios" name="comment" type="text"
-            class="form-control"></textarea>
-        </div>
-      </div>
+      <!-- </div> -->
       <div class="modal-footer">
         <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button type="submit" class="btn btn-primary">Crear Pedido</button>
@@ -180,7 +197,7 @@
   <div class="modal-dialog">
     <form ngNativeValidate (submit)="editOrder()" class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editOrderModalLabel">Editar Pedido</h1>
+        <h1 class="modal-title fs-5" id="editOrderModalLabel">Editar Pedido #{{editOrderInfo.pedido_id}}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -188,8 +205,25 @@
           <p class="text-secondary">Cliente</p>
           <select required [(ngModel)]="editOrderInfo.cliente_id" class="form-control" name="selectClientEdit"
             [value]="editOrderInfo.cliente_id">
-            <option *ngFor="let client of clients" [value]="client.id">{{client.nombre}}</option>
+            <option *ngFor="let client of clients" [value]="client.id">{{client.nombre}} - {{client.telefono.trim() === '' ? 'No tiene numero' :  client.telefono}}</option>
           </select>
+          <button (click)="changeBoolClient()" type="button" class="btn btn-secondary my-2">
+            Agregar cliente
+          </button>
+          <div *ngIf="isCreatingClient" class="border mx-3 p-2">
+            <p class="text-secondary">Nombre del cliente</p>
+            <input [(ngModel)]="clientForm.nombre" name="client_nombre" type="text"
+            class="form-control mb-2" />
+            <p class="text-secondary">Correo del cliente</p>
+            <input [(ngModel)]="clientForm.email" name="client_nombre" type="email"
+            class="form-control mb-2" />
+            <p class="text-secondary">Telefono del cliente</p>
+            <input [(ngModel)]="clientForm.telefono" name="client_nombre" type="number"
+            class="form-control mb-2" />
+            <button type="button" (click)="createClient()" class="btn btn-outline-primary">
+              Crear cliente
+            </button>
+          </div>
         </div>
         <div class="mb-2">
           <p class="text-secondary">Fecha del pedido</p>
@@ -203,52 +237,54 @@
         <div class="mb-2 row row-cols-md-2">
           <div class="">
             <p class="text-secondary">Costo</p>
-            <input [(ngModel)]="editOrderInfo.costo" name="costEdit" type="number" required class="form-control" />
+            <input disabled [(ngModel)]="editOrderInfo.costo" name="costEdit" type="number" required class="form-control" />
           </div>
           <div class="">
             <p class="text-secondary">Tipo de entrega</p>
-            <select [(ngModel)]="editOrderInfo.tipo_entrega" class="form-control" name="selectClientEdit"
-              [value]="editOrderInfo.tipo_entrega">
-              <option [value]="0">Recoger en Tienda</option>
-              <option [value]="1">Envio a domicilio</option>
+            <select [(ngModel)]="editOrderInfo.tipo_entrega" class="form-control" name="selectClientEditType"
+              >
+              <option value="0" selected="{{editOrderInfo.tipo_entrega == '0' ? true : false}}">Recoger en Tienda</option>
+              <option value="1" selected="{{editOrderInfo.tipo_entrega == '1' ? true : false}}">Envio a domicilio</option>
             </select>
           </div>
         </div>
-        <div class="mb-2 row row-cols-md-2">
-          <div class="">
-            <p class="text-secondary">Fecha entrega</p>
-            <input [(ngModel)]="editOrderInfo.fecha_entrega" name="feEdit" type="date" class="form-control" />
+        <!-- <div *ngIf="editOrderInfo.tipo_entrega == '1'" class=""> -->
+          <div class="mb-2 row row-cols-md-2">
+            <div class="">
+              <p class="text-secondary">Fecha entrega</p>
+              <input required [(ngModel)]="editOrderInfo.fecha_entrega" name="feEdit" type="date" class="form-control" />
+            </div>
+            <div class="">
+              <p class="text-secondary">Hora</p>
+              <input required [(ngModel)]="editOrderInfo.hora" name="horEdit" type="time" class="form-control" />
+            </div>
           </div>
-          <div class="">
-            <p class="text-secondary">Hora</p>
-            <input [(ngModel)]="editOrderInfo.hora" name="horEdit" type="time" class="form-control" />
+          <div class="mb-2 row row-cols-md-2">
+            <div class="">
+              <p class="text-secondary">Nombre Receptor</p>
+              <input required [(ngModel)]="editOrderInfo.nombre_receptor" name="nrEdit" type="text" class="form-control" />
+            </div>
+            <div class="">
+              <p class="text-secondary">Telefono Receptor</p>
+              <input [(ngModel)]="editOrderInfo.telefono_receptor" name="trEdit" type="text" class="form-control" />
+            </div>
+          </div>
+          <div *ngIf="editOrderInfo.tipo_entrega == '1'" class="mb-2">
+            <google-autocomplete [value]="editOrderInfo.direccion" (placeChanged)="handlePlaceEdit($event)"
+                placeholder="Direccion"></google-autocomplete>
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Mensaje Tarjeta</p>
+            <textarea required rows="5" [(ngModel)]="editOrderInfo.mensaje_tarjeta" name="tarEdit" type="text"
+              class="form-control"></textarea>
+          </div>
+          <div class="mb-2">
+            <p class="text-secondary">Comentario</p>
+            <textarea required rows="5" [(ngModel)]="editOrderInfo.comentarios" name="commentEdit" type="text"
+              class="form-control"></textarea>
           </div>
         </div>
-        <div class="mb-2 row row-cols-md-2">
-          <div class="">
-            <p class="text-secondary">Nombre Receptopr</p>
-            <input [(ngModel)]="editOrderInfo.nombre_receptor" name="nrEdit" type="text" class="form-control" />
-          </div>
-          <div class="">
-            <p class="text-secondary">Telefono Receptor</p>
-            <input [(ngModel)]="editOrderInfo.telefono_receptor" name="nrEdit" type="text" class="form-control" />
-          </div>
-        </div>
-        <div class="mb-2">
-          <p class="text-secondary">Direccion</p>
-          <input [(ngModel)]="editOrderInfo.direccion" name="addresEdit" type="text" class="form-control" />
-        </div>
-        <div class="mb-2">
-          <p class="text-secondary">Mensaje Tarjeta</p>
-          <textarea rows="5" [(ngModel)]="editOrderInfo.mensaje_tarjeta" name="addresEdit" type="text"
-            class="form-control"></textarea>
-        </div>
-        <div class="mb-2">
-          <p class="text-secondary">Comentario</p>
-          <textarea rows="5" [(ngModel)]="editOrderInfo.comentarios" name="commentEdit" type="text"
-            class="form-control"></textarea>
-        </div>
-      </div>
+      <!-- </div> -->
       <div class="modal-footer">
         <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button type="submit" class="btn btn-primary">Actualizar Pedido</button>
@@ -260,7 +296,7 @@
 <!-- *Para ver pagos -->
 <div class="modal fade" id="paymenthsTableModal" tabindex="-1" aria-labelledby="paymenthsTableModalLabel"
   aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="paymenthsTableModalLabel">Pagos</h1>
@@ -325,7 +361,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">
+        <button (click)="createPayToOrder()" type="button" class="btn btn-primary">
           Generar Pago
         </button>
       </div>
@@ -344,7 +380,6 @@
       </div>
       <div class="modal-body">
         <p class="text-secondary">Seleccione una opcion</p>
-        <p>{{editOrderInfo | json}}</p>
         <select [(ngModel)]="editOrderInfo.status" [value]="editOrderInfo.status" class="form-control">
           <option value="0">Por Pagar</option>
           <option value="1">Pagado</option>

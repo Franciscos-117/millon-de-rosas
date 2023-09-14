@@ -42,6 +42,8 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
   public paymenthsPerId: IncomePerId[] = [];
   public autocomple: boolean = false;
   public urlMaps: string = '';
+  public isCreatingClient: boolean = false;
+
 
   public clientForm = {
     nombre: '',
@@ -56,14 +58,16 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
     forma_de_pago_id: '',
     fecha: '',
     importe: '',
-    usuario_id: ''
+    usuario_id: '',
+    saldo: '',
   }
 
   selectOrderToPay(order: Order) {
     this.formAddPay = {
       ...this.formAddPay,
       pedido_id: order.id.toString(),
-      nombre: `${order.id} - ${order.cliente.nombre}`
+      nombre: `${order.id} - ${order.cliente.nombre}`,
+      saldo: order.saldo
     }
   };
 
@@ -128,6 +132,10 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
         }
       };
     }
+  }
+
+  changeBoolClient(){
+    this.isCreatingClient = !this.isCreatingClient;
   }
 
 
@@ -219,12 +227,25 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
 
   async createOrder() {
     // console.log('info a enviar ->', this.newOrderInfo);
+    if(this.newOrderInfo.tipo_entrega == '1' && this.newOrderInfo.direccion.trim() === "") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Se necesita una direccion',
+      });
+      return;
+    }
     try {
-      let response = await this.services.createOrder(this.newOrderInfo);
+
+      let response = await this.services.createOrder({
+        ...this.newOrderInfo,
+        direccion: this.newOrderInfo.tipo_entrega == '0' ? '' : this.newOrderInfo.direccion,
+      });
       // console.log('response ->', response);
       this.closeModal?.nativeElement.click();
       location.reload();
     } catch (error: any) {
+      console.log('Error create order ->', error);
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -233,14 +254,24 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
     }
   }
   async editOrder() {
-    // console.log('info a enviar ->', this.editOrderInfo);
+    if(this.editOrderInfo.tipo_entrega == '1' && this.editOrderInfo.direccion.trim() === "") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Se necesita una direccion',
+      });
+      return;
+    }
     try {
-      let response = await this.services.editOrder(this.editOrderInfo);
+      let response = await this.services.editOrder({
+        ...this.editOrderInfo,
+        direccion: this.editOrderInfo.tipo_entrega == '0' ? '' : this.editOrderInfo.direccion,
+      });
       // console.log('response ->', response);
       this.closeModal?.nativeElement.click();
       location.reload();
     } catch (error: any) {
-      // console.log('Error edit order ->', error);
+      console.log('Error edit order ->', error);
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -250,10 +281,18 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
   }
 
   async createPayToOrder() {
-    // console.log('info a enviar ->', this.formAddPay);
+    console.log('info a enviar ->', this.formAddPay);
+    if(Number(this.formAddPay.importe) > Number( this.formAddPay.saldo)){
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'El importe no puede ser mayor al saldo pendiente.',
+      });
+      return;
+    }
     try {
       let response = await this.services.payOrder(this.formAddPay);
-      // console.log('response pay ->', response);
+      console.log('response pay ->', response);
       this.closeModal?.nativeElement.click();
       location.reload();
     } catch (error: any) {
@@ -283,9 +322,48 @@ export class OrdersPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  async createClient() {
+    // console.log('entrop -');
+    // console.log('info a enviar new ->', this.infoNewClient);
+    if(this.clientForm.email.trim() === '' || this.clientForm.nombre.trim() === '' ){
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Algunos campos del cliente se encuentran vacios',
+      });
+      return;
+    }
+    try {
+      let response = await this.services.createClient(this.clientForm);
+      // console.log('response create client ->', response);
+      this.clientForm = {
+        ...this.clientForm,
+        email: '',
+        nombre: '',
+        telefono: ''
+      };
+    this.isCreatingClient = false;
+    this.getAllClients();
+    } catch (error: any) {
+      // console.log('error create client =>', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.notificacion.mensaje,
+
+      });
+    }
+  }
+
   handlePlace(event: any) {
     // console.log('Eventooo ->', event);
     this.newOrderInfo.direccion = event.address;
+    this.autocomple = true;
+    this.urlMaps = event.url;
+  }
+  handlePlaceEdit(event: any) {
+    // console.log('Eventooo ->', event);
+    this.editOrderInfo.direccion = event.address;
     this.autocomple = true;
     this.urlMaps = event.url;
   }

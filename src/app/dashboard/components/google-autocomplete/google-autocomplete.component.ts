@@ -18,7 +18,7 @@ export interface PlaceSearchResult {
   template: `
     <!-- <mat-form-field appearance="outline"> -->
       <p class="text-secondary">Direccion</p>
-      <input placeholder="Direccion..." #inputField class="form-control" name="google_places_ac"/>
+      <input [value]="value" placeholder="Direccion..." #inputField class="form-control" name="google_places_ac"/>
     <!-- </mat-form-field> -->
   `,
 })
@@ -28,6 +28,8 @@ export class GoogleAutocompleteComponent implements OnInit {
   inputField!: ElementRef;
 
   @Input() placeholder = 'Enter address...';
+
+  @Input() value = '';
 
   @Output() placeChanged = new EventEmitter<PlaceSearchResult>();
 
