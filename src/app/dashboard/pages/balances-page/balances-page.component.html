@@ -1,1 +1,101 @@
-<p>balances-page works!</p>
+<div class="py-5 px-2">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h2 class="text-secondary">Saldos</h2>
+    <button class="btn btn-outline-primary btn_actions" data-bs-toggle="modal" data-bs-target="#newClientModal">
+      Traspasar saldo
+    </button>
+  </div>
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+    <thead>
+      <tr class="border">
+        <th class="field_content" scope="col">#</th>
+        <th class="field_content" scope="col">Forma de pago</th>
+        <th class="field_content" scope="col">Ingresos</th>
+        <th class="field_content" scope="col">Egresos</th>
+        <th class="field_content" scope="col">Saldo</th>
+        <th class="field_content" scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let balance of balances; let i = index">
+        <th class="field_content" scope="row">{{i + 1}}</th>
+        <td class="field_content">{{balance.forma_de_pago.nombre}}</td>
+        <td class="field_content">$ {{balance.ingresos}}</td>
+        <td class="field_content">$ {{balance.egresos}}</td>
+        <td class="field_content">$ {{balance.saldo}}</td>
+        <td class="">
+          <button (click)="viewMovements(balance.id)" class="btn btn-outline-success btn_actions me-2" data-bs-toggle="modal" data-bs-target="#editClientModal">
+            Ver movimientos
+          </button>
+        </td>
+      </tr>
+  </table>
+</div>
+<!-- *Para crear nuevo cliente-->
+<div class="modal fade" id="newClientModal" tabindex="-1" aria-labelledby="newClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form  ngNativeValidate (submit)="createBalnce()" class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newClientModalLabel">Agregar balance</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <p class="text-secondary">Selecciona la cuenta de origen</p>
+          <input [(ngModel)]="formBalance.cliente_id" name="client_select_id" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Importe</p>
+          <input [(ngModel)]="formBalance.importe" name="telefonoNew" type="text" required class="form-control" />
+        </div>
+        <div class="mb-4">
+          <p class="text-secondary">Seleccione cuenta de destino</p>
+          <input [(ngModel)]="formBalance.destino_id" name="emailNew" type="email" required class="form-control" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button #closeModal type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary">Crear balance</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ? Para ver movimientos -->
+<div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editClientModalLabel">Editar Cliente</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table border table-striped table-bordered table_users">
+          <thead>
+            <tr class="border">
+              <th class="field_content" scope="col">Tipo #</th>
+              <th class="field_content" scope="col">Pedido</th>
+              <th class="field_content" scope="col">Forma de pago</th>
+              <th class="field_content" scope="col">Fecha</th>
+              <th class="field_content" scope="col">Importe</th>
+              <th class="field_content" scope="col">Proveedor</th>
+              <th class="field_content" scope="col">Descripcion</th>
+              <th class="field_content" scope="col">Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let move of movements; let i = index">
+              <th class="field_content" scope="row">{{move.tipomovimiento}}{{move.movimiento?.id}}</th>
+              <td class="field_content">{{move.movimiento?.id}}</td>
+              <td class="field_content">{{move.movimiento?.forma_de_pago?.nombre}}</td>
+              <td class="field_content">{{move.movimiento?.fecha}}</td>
+              <td class="field_content">{{move.movimiento?.importe}}</td>
+              <td class="field_content">{{move.movimiento?.proveedor?.nombre}}</td>
+              <td class="field_content">{{move.movimiento?.descripcion}}</td>
+              <td class="field_content">{{move.movimiento?.usuario?.nombre}}</td>
+            </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

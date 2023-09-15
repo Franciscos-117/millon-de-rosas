@@ -24,6 +24,7 @@ import OrderServices from './pages/orders-page/services/orders.service';
 import { GoogleAutocompleteComponent } from './components/google-autocomplete/google-autocomplete.component';
 import { DataTablesModule } from "angular-datatables";
 import { HistoryPageComponent } from './pages/history-page/history-page.component';
+import BalancesServices from './pages/balances-page/services/Balances.service';
 
 
 @NgModule({
@@ -55,7 +56,8 @@ import { HistoryPageComponent } from './pages/history-page/history-page.componen
     IncomesServices,
     ExpensesServices,
     ClientServices,
-    OrderServices
+    OrderServices,
+    BalancesServices
   ]
 })
 export class DashboardModule { }
