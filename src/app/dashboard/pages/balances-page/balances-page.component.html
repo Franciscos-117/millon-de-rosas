@@ -5,7 +5,8 @@
       Traspasar saldo
     </button>
   </div>
-  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="table border table-striped table-bordered table_users">
+  <table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger"
+    class="table border table-striped table-bordered table_users">
     <thead>
       <tr class="border">
         <th class="field_content" scope="col">#</th>
@@ -24,7 +25,8 @@
         <td class="field_content">$ {{balance.egresos}}</td>
         <td class="field_content">$ {{balance.saldo}}</td>
         <td class="">
-          <button (click)="viewMovements(balance.id)" class="btn btn-outline-success btn_actions me-2" data-bs-toggle="modal" data-bs-target="#editClientModal">
+          <button (click)="viewMovements(balance.id)" class="btn btn-outline-success btn_actions me-2"
+            data-bs-toggle="modal" data-bs-target="#editClientModal">
             Ver movimientos
           </button>
         </td>
@@ -34,7 +36,7 @@
 <!-- *Para crear nuevo cliente-->
 <div class="modal fade" id="newClientModal" tabindex="-1" aria-labelledby="newClientModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form  ngNativeValidate (submit)="createBalnce()" class="modal-content">
+    <form ngNativeValidate (submit)="createBalnce()" class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="newClientModalLabel">Agregar balance</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -42,15 +44,20 @@
       <div class="modal-body">
         <div class="mb-4">
           <p class="text-secondary">Selecciona la cuenta de origen</p>
-          <input [(ngModel)]="formBalance.cliente_id" name="client_select_id" type="text" required class="form-control" />
+          <select required [(ngModel)]="formBalance.forma_de_pago_id" [value]="formBalance.forma_de_pago_id" class="form-control" name="selectProvider">
+            <option *ngFor="let pay of paymenths" [value]="pay.id">{{pay.nombre}}</option>
+          </select>
         </div>
         <div class="mb-4">
           <p class="text-secondary">Importe</p>
-          <input [(ngModel)]="formBalance.importe" name="telefonoNew" type="text" required class="form-control" />
+          <input [(ngModel)]="formBalance.importe" name="emailNew" type="number" required class="form-control" />
+
         </div>
         <div class="mb-4">
           <p class="text-secondary">Seleccione cuenta de destino</p>
-          <input [(ngModel)]="formBalance.destino_id" name="emailNew" type="email" required class="form-control" />
+          <select required [(ngModel)]="formBalance.forma_de_pago_id_destino" [value]="formBalance.forma_de_pago_id_destino" class="form-control" name="selectProvider">
+            <option *ngFor="let pay of paymenths" [value]="pay.id">{{pay.nombre}}</option>
+          </select>
         </div>
       </div>
       <div class="modal-footer">
@@ -85,7 +92,7 @@
           <tbody>
             <tr *ngFor="let move of movements; let i = index">
               <th class="field_content" scope="row">{{move.tipomovimiento}}{{move.movimiento?.id}}</th>
-              <td class="field_content">{{move.movimiento?.id}}</td>
+              <td class="field_content">{{move.movimiento?.pedido_id}}</td>
               <td class="field_content">{{move.movimiento?.forma_de_pago?.nombre}}</td>
               <td class="field_content">{{move.movimiento?.fecha}}</td>
               <td class="field_content">{{move.movimiento?.importe}}</td>
@@ -93,9 +100,9 @@
               <td class="field_content">{{move.movimiento?.descripcion}}</td>
               <td class="field_content">{{move.movimiento?.usuario?.nombre}}</td>
             </tr>
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
-

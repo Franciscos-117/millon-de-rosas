@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import BalancesServices from './services/Balances.service';
 import { Balance } from './interfaces/AllBalances.interface';
 import { Movements } from './interfaces/Movements.interface';
+import { PaymenthMethod } from '../paymenthmethods-page/interfaces/paymenthmethods.interface';
 
 @Component({
   selector: 'app-balances-page',
@@ -14,6 +15,8 @@ export class BalancesPageComponent implements OnInit, OnDestroy {
 
   public balances: Balance[] = [];
   public movements: Movements[] = [];
+  public paymenths: PaymenthMethod[] = [];
+
 
   dtOptions: DataTables.Settings = {};
   dtTrigger:Subject<any>=new Subject<any>();
@@ -23,9 +26,9 @@ export class BalancesPageComponent implements OnInit, OnDestroy {
   ) { }
 
   public formBalance = {
-    cliente_id: '',
+    forma_de_pago_id: '',
     importe: '',
-    destino_id: '',
+    forma_de_pago_id_destino: '',
     usuario_id: '',
   }
 
@@ -43,6 +46,7 @@ export class BalancesPageComponent implements OnInit, OnDestroy {
       };
       this.formBalance.usuario_id = usuario.id;
       this.getAllBalances();
+      this.getAllPays();
     }
   }
 
@@ -59,9 +63,24 @@ export class BalancesPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  async getAllPays() {
+    try {
+      let response = await this.services.getAllPaymenthMethods();
+      this.paymenths = response.data;
+    } catch (error) {
+      // console.log('Error get clients ->', error);
+    }
+  }
 
-  createBalnce(){
 
+  async createBalnce(){
+    try {
+      let response = await this.services.createBalance(this.formBalance);
+      // console.log('response =>', response);
+      location.reload();
+    } catch (error) {
+
+    }
   }
 
   async viewMovements(id: any){
