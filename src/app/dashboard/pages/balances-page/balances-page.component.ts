@@ -16,6 +16,7 @@ export class BalancesPageComponent implements OnInit, OnDestroy {
   public balances: Balance[] = [];
   public movements: Movements[] = [];
   public paymenths: PaymenthMethod[] = [];
+  public paymenths2: PaymenthMethod[] = this.paymenths.filter(values => values.id.toString() != this.formBalance.forma_de_pago_id);
 
 
   dtOptions: DataTables.Settings = {};
@@ -61,6 +62,10 @@ export class BalancesPageComponent implements OnInit, OnDestroy {
     } catch (error) {
       // console.log('Error get clients ->', error);
     }
+  }
+  filterOptions() {
+    // Filtrar las opciones del segundo select según la selección del primero
+    this.paymenths2 = this.paymenths.filter(option => option.id.toString() != this.formBalance.forma_de_pago_id);
   }
 
   async getAllPays() {

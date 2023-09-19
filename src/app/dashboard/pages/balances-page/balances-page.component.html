@@ -44,7 +44,7 @@
       <div class="modal-body">
         <div class="mb-4">
           <p class="text-secondary">Selecciona la cuenta de origen</p>
-          <select required [(ngModel)]="formBalance.forma_de_pago_id" [value]="formBalance.forma_de_pago_id" class="form-control" name="selectProvider">
+          <select (change)="filterOptions()" required [(ngModel)]="formBalance.forma_de_pago_id" [value]="formBalance.forma_de_pago_id" class="form-control" name="selectProvider">
             <option *ngFor="let pay of paymenths" [value]="pay.id">{{pay.nombre}}</option>
           </select>
         </div>
@@ -56,7 +56,12 @@
         <div class="mb-4">
           <p class="text-secondary">Seleccione cuenta de destino</p>
           <select required [(ngModel)]="formBalance.forma_de_pago_id_destino" [value]="formBalance.forma_de_pago_id_destino" class="form-control" name="selectProvider">
-            <option *ngFor="let pay of paymenths" [value]="pay.id">{{pay.nombre}}</option>
+            <option
+              *ngFor="let pay of paymenths2;"
+              [value]="pay.id"
+            >
+              {{pay.nombre}}
+            </option>
           </select>
         </div>
       </div>
